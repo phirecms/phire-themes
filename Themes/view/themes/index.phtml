@@ -1,0 +1,57 @@
+<?php include $phireHeader; ?>
+    <h1 class="themes-header"><?=$title; ?></h1>
+<?php if (($newThemes > 0) && ($acl->isAllowed($user->role, 'themes', 'install'))): ?>
+    <nav id="sub-nav">
+        <nav><a href="<?=$phireUri . '/themes/install'; ?>">Install (<?=$newThemes; ?>)</a></nav>
+    </nav>
+<?php endif; ?>
+<?php if (count($themes) > 0): ?>
+<?php if (null !== $pages): ?>
+    <div class="page-links"><?=$pages; ?></div>
+<?php endif; ?>
+<?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?>
+    <form id="themes-form" action="<?=$phireUri . '/themes/process'; ?>" method="post">
+<?php endif; ?>
+        <table class="data-table" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <th><a href="<?=$phireUri . '/themes?sort=id';?>">#</a></th>
+                <th><a href="<?=$phireUri . '/themes?sort=folder';?>">Name</a></th>
+                <th>Version</th>
+                <th>Description</th>
+                <th>Author</th>
+                <th class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><a href="<?=$phireUri . '/themes?sort=active';?>">Active</a><?php else: ?>&nbsp;<?php endif; ?></th>
+                <th class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><input type="checkbox" name="checkall" id="checkall" value="rm_themes" /><?php else: ?>&nbsp;<?php endif; ?></th>
+            </tr>
+<?php $i = 1; ?>
+<?php foreach ($themes as $theme): ?>
+<?php
+    $assets  = unserialize($theme->assets);
+    $yesChecked = ($theme->active)  ? ' checked="checked"' : null;
+    $noChecked  = (!$theme->active) ? ' checked="checked"' : null;
+?>
+            <tr>
+                <td><?=$theme->id; ?></td>
+                <td><?=($assets['info']['Theme Name']) ? $assets['info']['Theme Name'] : '&nbsp;'; ?></td>
+                <td><?=($assets['info']['Version']) ? $assets['info']['Version'] : '&nbsp;'; ?></td>
+                <td><?=($assets['info']['Description']) ? $assets['info']['Description'] : '&nbsp;'; ?></td>
+                <td><?=($assets['info']['Author']) ? $assets['info']['Author'] : '&nbsp;'; ?></td>
+                <td class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><input type="radio" name="active_<?=$theme->id; ?>" value="1" <?=$yesChecked; ?>/> Yes &nbsp;&nbsp;&nbsp; <input type="radio" name="active_<?=$theme->id; ?>" value="0" <?=$noChecked; ?>/> No<?php else: ?>&nbsp;<?php endif; ?></td>
+                <td class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><input type="checkbox" name="rm_themes[]" id="rm_themes<?=$i++; ?>" value="<?=$theme->id; ?>" /><?php else: ?>&nbsp;<?php endif; ?></td>
+            </tr>
+<?php if (null !== $theme->nav): ?>
+            <tr class="no-background no-padding">
+                <td colspan="8" class="no-background no-padding">
+<?=$theme->nav; ?>
+                </td>
+            </tr>
+<?php endif; ?>
+<?php endforeach; ?>
+        </table>
+<?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?>
+        <div id="form-footer"><input type="submit" name="submit" class="process-btn" value="Process" /></div>
+    </form>
+<?php endif; ?>
+<?php else: ?>
+    <p>There are currently no themes.<?php if (($newThemes > 0) && ($acl->isAllowed($user->role, 'themes', 'install'))): ?> New themes have been detected. Click the install button above to install them.<?php endif; ?></p>
+<?php endif; ?>
+<?php include $phireFooter; ?>

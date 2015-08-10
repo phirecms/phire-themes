@@ -1,0 +1,17 @@
+/**
+ * Themes Module Style Sheet for Phire CMS 2
+ */
+
+.themes-nav-icon {
+    background-image: url(../img/themes-icon-sm.png);
+    background-position: 8px center;
+    background-repeat: no-repeat;
+}
+
+.themes-header {
+    margin: 10px 0 10px 0;
+    padding: 10px 0 10px 40px;
+    background-image: url(../img/themes-icon-lg.png);
+    background-position: left center;
+    background-repeat: no-repeat;
+}
