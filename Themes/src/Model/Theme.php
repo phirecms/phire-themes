@@ -18,8 +18,21 @@ class Theme extends AbstractModel
      */
     public function getAll($sort = null)
     {
-        $order = (null !== $sort) ? $this->getSortOrder($sort) : 'id ASC';
-        return Table\Themes::findAll(null, ['order' => $order])->rows();
+        $order     = (null !== $sort) ? $this->getSortOrder($sort) : 'id ASC';
+        $rows      = Table\Themes::findAll(null, ['order' => $order])->rows();
+        $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes';
+
+        foreach ($rows as $i => $row) {
+            if (file_exists($themePath . '/' . $row->name . '/screenshot.jpg')) {
+                $rows[$i]->screenshot = '<img class="theme-screenshot" src="' . BASE_PATH . CONTENT_PATH . '/themes/' . $row->name . '/screenshot.jpg" width="100" />';
+            } else if (file_exists($themePath . '/' . $row->name . '/screenshot.png')) {
+                $rows[$i]->screenshot = '<img class="theme-screenshot" src="' . BASE_PATH . CONTENT_PATH . '/themes/' . $row->name . '/screenshot.png" width="100" />';
+            } else {
+                $rows[$i]->screenshot = null;
+            }
+        }
+
+        return $rows;
     }
 
     /**
@@ -118,10 +131,10 @@ class Theme extends AbstractModel
                         $thm = new Table\Themes([
                             'name'   => $name,
                             'file'   => $theme,
-                            'folder' => $name
+                            'folder' => $name,
                             'active' => 0,
                             'assets' => serialize([
-                                'info' => $this->getInfo(file_get_contents($style))
+                                'info' => $info
                             ])
                         ]);
 
@@ -142,11 +155,16 @@ class Theme extends AbstractModel
     public function process($post, \Pop\Service\Locator $services)
     {
         foreach ($post as $key => $value) {
-            if (strpos($key, 'active_') !== false) {
-                $id    = substr($key, (strrpos($key, '_') + 1));
-                $theme = Table\Themes::findById((int)$id);
+            if (strpos($key, 'active') !== false) {
+                $themes = Table\Themes::findall();
+                foreach ($themes->rows() as $theme) {
+                    $thm = Table\Themes::findById($theme->id);
+                    $thm->active = 0;
+                    $thm->save();
+                }
+                $theme = Table\Themes::findById((int)$value);
                 if (isset($theme->id)) {
-                    $theme->active = (int)$value;
+                    $theme->active = 1;
                     $theme->save();
                 }
             }
