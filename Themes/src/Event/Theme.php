@@ -53,29 +53,21 @@ class Theme
                     $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder . '/';
                     if (($controller->getTemplate() == -1) &&
                         (file_exists($themePath . 'error.phtml') || file_exists($themePath . 'error.php'))) {
-                        $template = file_exists($themePath . 'error.phtml') ? $themePath . 'error.phtml' : $themePath . 'error.php';
+                        $template = file_exists($themePath . 'error.phtml') ? 'error.phtml' : 'error.php';
                     } else if (($controller->getTemplate() == -2) &&
                         (file_exists($themePath . 'date.phtml') || file_exists($themePath . 'date.php'))) {
-                        $template = file_exists($themePath . 'date.phtml') ? $themePath . 'date.phtml' : $themePath . 'date.php';
+                        $template = file_exists($themePath . 'date.phtml') ? 'date.phtml' : 'date.php';
                     } else if (file_exists($themePath . $controller->getTemplate())) {
-                        $template = $themePath . $controller->getTemplate();
+                        $template = $controller->getTemplate();
                     }
+
                     if (null !== $template) {
-                        $controller->view()->setTemplate($template);
-                    }
-                    /*
-                    $device = self::getDevice($controller->request()->getQuery('mobile'));
-                    if ((null !== $device) && ($template->device != $device)) {
-                        $childTemplate = Table\Templates::findBy(['parent_id' => $template->id, 'device' => $device]);
-                        if (isset($childTemplate->id)) {
-                            $tmpl = $childTemplate->template;
-                        } else {
-                            $tmpl = $template->template;
+                        $device = self::getDevice($controller->request()->getQuery('mobile'));
+                        if ((null !== $device) && (file_exists($themePath . $device . '/' . $template))) {
+                            $template = $device . '/' . $template;
                         }
-                    } else {
-                        $tmpl = $template->template;
+                        $controller->view()->setTemplate($themePath . $template);
                     }
-                    */
                 }
             }
         }
