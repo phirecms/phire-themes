@@ -44,13 +44,23 @@ class Theme
      */
     public static function setTemplate(AbstractController $controller, Application $application)
     {
-        if ($application->isRegistered('Content') &&
+        $template  = null;
+        $themePath = null;
+        $theme     = Table\Themes::findBy(['active' => 1]);
+
+        if (isset($theme->id)) {
+            $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder . '/';
+        }
+
+        if ($application->isRegistered('Categories') &&
+            ($controller instanceof \Categories\Controller\IndexController) && ($controller->hasView())) {
+            if (isset($theme->id)) {
+                $template = file_exists($themePath . 'error.phtml') ? 'category.phtml' : 'category.php';
+            }
+        } else if ($application->isRegistered('Content') &&
             ($controller instanceof \Content\Controller\IndexController) && ($controller->hasView())) {
             if (null !== $controller->getTemplate()) {
-                $theme = Table\Themes::findBy(['active' => 1]);
-                $template = null;
                 if (isset($theme->id)) {
-                    $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder . '/';
                     if (($controller->getTemplate() == -1) &&
                         (file_exists($themePath . 'error.phtml') || file_exists($themePath . 'error.php'))) {
                         $template = file_exists($themePath . 'error.phtml') ? 'error.phtml' : 'error.php';
@@ -60,16 +70,16 @@ class Theme
                     } else if (file_exists($themePath . $controller->getTemplate())) {
                         $template = $controller->getTemplate();
                     }
-
-                    if (null !== $template) {
-                        $device = self::getDevice($controller->request()->getQuery('mobile'));
-                        if ((null !== $device) && (file_exists($themePath . $device . '/' . $template))) {
-                            $template = $device . '/' . $template;
-                        }
-                        $controller->view()->setTemplate($themePath . $template);
-                    }
                 }
             }
+        }
+
+        if ((null !== $template) && (null !== $themePath)) {
+            $device = self::getDevice($controller->request()->getQuery('mobile'));
+            if ((null !== $device) && (file_exists($themePath . $device . '/' . $template))) {
+                $template = $device . '/' . $template;
+            }
+            $controller->view()->setTemplate($themePath . $template);
         }
     }
 
