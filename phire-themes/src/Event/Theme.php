@@ -1,8 +1,8 @@
 <?php
 
-namespace Themes\Event;
+namespace Phire\Themes\Event;
 
-use Themes\Table;
+use Phire\Themes\Table;
 use Pop\Application;
 use Pop\File\Dir;
 use Pop\Web\Mobile;
@@ -20,14 +20,14 @@ class Theme
      */
     public static function bootstrap(Application $application)
     {
-        if ($application->isRegistered('Content')) {
+        if ($application->isRegistered('phire-content')) {
             $theme = Table\Themes::findBy(['active' => 1]);
             if (isset($theme->id)) {
                 $dir = new Dir($_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder, false, false, false);
                 $forms = $application->config()['forms'];
                 foreach ($dir->getFiles() as $file) {
                     if ((strpos($file, '.ph') !== false) && (self::checkTemplateName($file))) {
-                        $forms['Content\Form\Content'][0]['content_template']['value'][$file] = $file;
+                        $forms['Phire\Content\Form\Content'][0]['content_template']['value'][$file] = $file;
                     }
                 }
                 $application->mergeConfig(['forms' => $forms], true);
@@ -52,13 +52,13 @@ class Theme
             $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder . '/';
         }
 
-        if ($application->isRegistered('Categories') &&
-            ($controller instanceof \Categories\Controller\IndexController) && ($controller->hasView())) {
+        if ($application->isRegistered('phire-categories') &&
+            ($controller instanceof \Phire\Categories\Controller\IndexController) && ($controller->hasView())) {
             if (isset($theme->id)) {
                 $template = file_exists($themePath . 'error.phtml') ? 'category.phtml' : 'category.php';
             }
-        } else if ($application->isRegistered('Content') &&
-            ($controller instanceof \Content\Controller\IndexController) && ($controller->hasView())) {
+        } else if ($application->isRegistered('phire-content') &&
+            ($controller instanceof \Phire\Content\Controller\IndexController) && ($controller->hasView())) {
             if (null !== $controller->getTemplate()) {
                 if (isset($theme->id)) {
                     if (($controller->getTemplate() == -1) &&

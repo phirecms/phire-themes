@@ -1,9 +1,9 @@
 <?php
 
-namespace Themes\Controller;
+namespace Phire\Themes\Controller;
 
-use Themes\Model;
-use Themes\Table;
+use Phire\Themes\Model;
+use Phire\Themes\Table;
 use Phire\Controller\AbstractController;
 
 class IndexController extends AbstractController

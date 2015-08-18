@@ -1,13 +1,13 @@
 <?php
 /**
- * Module Name: Themes
+ * Module Name: phire-themes
  * Author: Nick Sagona
  * Description: This is the themes module for Phire CMS 2, to be used in conjunction with the Content module
  * Version: 1.0
  */
 return [
-    'Themes' => [
-        'prefix'     => 'Themes\\',
+    'phire-themes' => [
+        'prefix'     => 'Phire\Themes\\',
         'src'        => __DIR__ . '/../src',
         'routes'     => include 'routes.php',
         'resources'  => include 'resources.php',
@@ -44,12 +44,12 @@ return [
         'events' => [
             [
                 'name'     => 'app.route.pre',
-                'action'   => 'Themes\Event\Theme::bootstrap',
+                'action'   => 'Phire\Themes\Event\Theme::bootstrap',
                 'priority' => 1000
             ],
             [
                 'name'     => 'app.send',
-                'action'   => 'Themes\Event\Theme::setTemplate',
+                'action'   => 'Phire\Themes\Event\Theme::setTemplate',
                 'priority' => 1000
             ]
         ]

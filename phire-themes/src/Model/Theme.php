@@ -1,8 +1,8 @@
 <?php
 
-namespace Themes\Model;
+namespace Phire\Themes\Model;
 
-use Themes\Table;
+use Phire\Themes\Table;
 use Phire\Model\AbstractModel;
 use Pop\Archive\Archive;
 use Pop\File\Dir;

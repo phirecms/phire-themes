@@ -3,7 +3,7 @@
 return [
     APP_URI => [
         '/themes[/]' => [
-            'controller' => 'Themes\Controller\IndexController',
+            'controller' => 'Phire\Themes\Controller\IndexController',
             'action'     => 'index',
             'acl'        => [
                 'resource'   => 'themes',
@@ -11,7 +11,7 @@ return [
             ]
         ],
         '/themes/install[/]' => [
-            'controller' => 'Themes\Controller\IndexController',
+            'controller' => 'Phire\Themes\Controller\IndexController',
             'action'     => 'install',
             'acl'        => [
                 'resource'   => 'themes',
@@ -19,7 +19,7 @@ return [
             ]
         ],
         '/themes/process[/]' => [
-            'controller' => 'Themes\Controller\IndexController',
+            'controller' => 'Phire\Themes\Controller\IndexController',
             'action'     => 'process',
             'acl'        => [
                 'resource'   => 'themes',
