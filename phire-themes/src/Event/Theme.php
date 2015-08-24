@@ -54,8 +54,8 @@ class Theme
 
         if ($application->isRegistered('phire-categories') &&
             ($controller instanceof \Phire\Categories\Controller\IndexController) && ($controller->hasView())) {
-            if (isset($theme->id)) {
-                $template = file_exists($themePath . 'error.phtml') ? 'category.phtml' : 'category.php';
+            if (isset($theme->id) && (file_exists($themePath . 'category.phtml') || file_exists($themePath . 'category.php'))) {
+                $template = file_exists($themePath . 'category.phtml') ? 'category.phtml' : 'category.php';
             }
         } else if ($application->isRegistered('phire-content') &&
             ($controller instanceof \Phire\Content\Controller\IndexController) && ($controller->hasView())) {
