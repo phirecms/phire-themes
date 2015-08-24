@@ -48,7 +48,7 @@ return [
                 'priority' => 1000
             ],
             [
-                'name'     => 'app.send',
+                'name'     => 'app.send.pre',
                 'action'   => 'Phire\Themes\Event\Theme::setTemplate',
                 'priority' => 1000
             ]
