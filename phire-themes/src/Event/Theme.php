@@ -52,10 +52,19 @@ class Theme
             $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder . '/';
         }
 
-        if ($application->isRegistered('phire-categories') &&
-            ($controller instanceof \Phire\Categories\Controller\IndexController) && ($controller->hasView())) {
-            if (isset($theme->id) && (file_exists($themePath . 'category.phtml') || file_exists($themePath . 'category.php'))) {
-                $template = file_exists($themePath . 'category.phtml') ? 'category.phtml' : 'category.php';
+        if ($application->isRegistered('phire-categories') && ($controller instanceof \Phire\Categories\Controller\IndexController) &&
+            ($controller->hasView()) && ($controller->getTemplate() != -1)) {
+            if (isset($theme->id)) {
+                if (null !== $controller->view()->category_slug) {
+                    $catSlug = 'category-' . str_replace('/', '-', $controller->view()->category_slug);
+                    if (file_exists($themePath . $catSlug . '.phtml') || file_exists($themePath . $catSlug . '.php')) {
+                        $template = file_exists($themePath . $catSlug . '.phtml') ? $catSlug . '.phtml' : $catSlug . '.php';
+                    } else if (file_exists($themePath . 'category.phtml') || file_exists($themePath . 'category.php')) {
+                        $template = file_exists($themePath . 'category.phtml') ? 'category.phtml' : 'category.php';
+                    }
+                } else if (file_exists($themePath . 'category.phtml') || file_exists($themePath . 'category.php')) {
+                    $template = file_exists($themePath . 'category.phtml') ? 'category.phtml' : 'category.php';
+                }
             }
         } else if ($application->isRegistered('phire-content') &&
             ($controller instanceof \Phire\Content\Controller\IndexController) && ($controller->hasView())) {
