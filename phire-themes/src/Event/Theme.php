@@ -52,7 +52,12 @@ class Theme
             $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder . '/';
         }
 
-        if ($application->isRegistered('phire-categories') && ($controller instanceof \Phire\Categories\Controller\IndexController) &&
+        if ($application->isRegistered('phire-search') && ($controller instanceof \Phire\Search\Controller\IndexController) &&
+            ($controller->hasView())) {
+            if (file_exists($themePath . 'search.phtml') || file_exists($themePath . 'search.php')) {
+                $template = file_exists($themePath . 'search.phtml') ? 'search.phtml' : 'search.php';
+            }
+        } else if ($application->isRegistered('phire-categories') && ($controller instanceof \Phire\Categories\Controller\IndexController) &&
             ($controller->hasView()) && ($controller->getTemplate() != -1)) {
             if (isset($theme->id)) {
                 if (null !== $controller->view()->category_slug) {
