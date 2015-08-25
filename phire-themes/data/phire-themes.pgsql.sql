@@ -20,5 +20,5 @@ CREATE TABLE IF NOT EXISTS "[{prefix}]themes" (
   PRIMARY KEY ("id")
 ) ;
 
-ALTER SEQUENCE theme_id_seq OWNED BY "[{prefix}]theme"."id";
+ALTER SEQUENCE theme_id_seq OWNED BY "[{prefix}]themes"."id";
 CREATE INDEX "theme_name" ON "[{prefix}]themes" ("name");
