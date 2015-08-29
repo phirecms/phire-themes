@@ -19,7 +19,7 @@ class Theme extends AbstractModel
     public function getAll($sort = null)
     {
         $order     = (null !== $sort) ? $this->getSortOrder($sort) : 'id ASC';
-        $rows      = Table\Themes::findAll(null, ['order' => $order])->rows();
+        $rows      = Table\Themes::findAll(['order' => $order])->rows();
         $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes';
 
         foreach ($rows as $i => $row) {
