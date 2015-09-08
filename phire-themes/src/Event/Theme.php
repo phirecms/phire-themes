@@ -126,7 +126,7 @@ class Theme
      * @param  string $mobile
      * @return string
      */
-    protected static function getDevice($mobile = null)
+    public static function getDevice($mobile = null)
     {
         $session = Session::getInstance();
 
