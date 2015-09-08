@@ -36,7 +36,8 @@ class IndexController extends AbstractController
         $theme = new Model\Theme();
         $theme->install($this->services);
 
-        $this->redirect(BASE_PATH . APP_URI . '/themes?saved=' . time());
+        $this->sess->setRequestValue('saved', true, 1);
+        $this->redirect(BASE_PATH . APP_URI . '/themes');
     }
 
     /**
@@ -49,11 +50,13 @@ class IndexController extends AbstractController
         $theme = new Model\Theme();
         $theme->process($this->request->getPost(), $this->services);
 
-        $uri = (null !== $this->request->getPost('rm_themes')) ?
-            BASE_PATH . APP_URI . '/themes?removed=' . time() :
-            BASE_PATH . APP_URI . '/themes?saved=' . time();
+        if (null !== $this->request->getPost('rm_themes')) {
+            $this->sess->setRequestValue('removed', true, 1);
+        } else {
+            $this->sess->setRequestValue('saved', true, 1);
+        }
 
-        \Pop\Http\Response::redirect($uri);
+        \Pop\Http\Response::redirect(BASE_PATH . APP_URI . '/themes');
         exit();
     }
 
