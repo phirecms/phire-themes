@@ -26,7 +26,7 @@ class Theme
                 $dir = new Dir($_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder, false, false, false);
                 $forms = $application->config()['forms'];
                 foreach ($dir->getFiles() as $file) {
-                    if ((strpos($file, '.ph') !== false) && (self::checkTemplateName($file))) {
+                    if ((strpos($file, '.ph') !== false) && (!in_array($file, $application->module('phire-themes')['invisible']))) {
                         $forms['Phire\Content\Form\Content'][0]['content_template']['value'][$file] = $file;
                     }
                 }
@@ -52,26 +52,7 @@ class Theme
             $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder . '/';
         }
 
-        if ($application->isRegistered('phire-search') && ($controller instanceof \Phire\Search\Controller\IndexController) &&
-            ($controller->hasView())) {
-            if (file_exists($themePath . 'search.phtml') || file_exists($themePath . 'search.php')) {
-                $template = file_exists($themePath . 'search.phtml') ? 'search.phtml' : 'search.php';
-            }
-        } else if ($application->isRegistered('phire-categories') && ($controller instanceof \Phire\Categories\Controller\IndexController) &&
-            ($controller->hasView()) && ($controller->getTemplate() != -1)) {
-            if (isset($theme->id)) {
-                if (null !== $controller->view()->category_slug) {
-                    $catSlug = 'category-' . str_replace('/', '-', $controller->view()->category_slug);
-                    if (file_exists($themePath . $catSlug . '.phtml') || file_exists($themePath . $catSlug . '.php')) {
-                        $template = file_exists($themePath . $catSlug . '.phtml') ? $catSlug . '.phtml' : $catSlug . '.php';
-                    } else if (file_exists($themePath . 'category.phtml') || file_exists($themePath . 'category.php')) {
-                        $template = file_exists($themePath . 'category.phtml') ? 'category.phtml' : 'category.php';
-                    }
-                } else if (file_exists($themePath . 'category.phtml') || file_exists($themePath . 'category.php')) {
-                    $template = file_exists($themePath . 'category.phtml') ? 'category.phtml' : 'category.php';
-                }
-            }
-        } else if ($application->isRegistered('phire-content') &&
+        if ($application->isRegistered('phire-content') &&
             ($controller instanceof \Phire\Content\Controller\IndexController) && ($controller->hasView())) {
             if (null !== $controller->getTemplate()) {
                 if (isset($theme->id)) {
@@ -95,29 +76,6 @@ class Theme
             }
             $controller->view()->setTemplate($themePath . $template);
         }
-    }
-
-    /**
-     * Check if the template is allowed
-     *
-     * @param  string $name
-     * @return boolean
-     */
-    public static function checkTemplateName($name)
-    {
-        $result = false;
-        if ((strtolower($name) != 'search') && (stripos($name, 'search.ph') === false) &&
-            (strtolower($name) != 'sidebar') && (stripos($name, 'sidebar.ph') === false) && (stripos($name, 'sidebar-') === false) &&
-            (strtolower($name) != 'category') && (stripos($name, 'category.ph') === false) && (stripos($name, 'category-') === false)  &&
-            (strtolower($name) != 'date') && (stripos($name, 'date.ph') === false) &&
-            (strtolower($name) != 'functions') && (stripos($name, 'functions.ph') === false) &&
-            (strtolower($name) != 'error') && (stripos($name, 'error.ph') === false) &&
-            (strtolower($name) != 'header') && (stripos($name, 'header.ph') === false) &&
-            (strtolower($name) != 'footer') && (stripos($name, 'footer.ph') === false)) {
-            $result = true;
-        }
-
-        return $result;
     }
 
     /**

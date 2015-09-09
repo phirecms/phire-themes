@@ -52,6 +52,25 @@ return [
                 'action'   => 'Phire\Themes\Event\Theme::setTemplate',
                 'priority' => 1000
             ]
+        ],
+        'invisible' => [
+            'search.php',
+            'search.phtml',
+            'sidebar.php',
+            'sidebar.phtml',
+            'category.php',
+            'category.phtml',
+            'tag.php',
+            'tag.phtml',
+            'date.php',
+            'date.phtml',
+            'error.php',
+            'error.phtml',
+            'header.php',
+            'header.phtml',
+            'footer.php',
+            'footer.phtml',
+            'functions.php'
         ]
     ]
 ];
