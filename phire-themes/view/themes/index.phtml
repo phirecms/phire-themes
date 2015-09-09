@@ -1,8 +1,8 @@
 <?php include $phireHeader; ?>
     <h1 class="themes-header"><?=$title; ?></h1>
-<?php if (($newThemes > 0) && ($acl->isAllowed($user->role, 'themes', 'install'))): ?>
+<?php if ((($newThemes > 0) || ($newChildren > 0)) && ($acl->isAllowed($user->role, 'themes', 'install'))): ?>
     <nav id="sub-nav">
-        <nav><a href="<?=$phireUri . '/themes/install'; ?>">Install (<?=$newThemes; ?>)</a></nav>
+        <nav><a href="<?=$phireUri . '/themes/install'; ?>">Install (<?=$newThemes + $newChildren; ?>)</a></nav>
     </nav>
 <?php endif; ?>
 <?php if (count($themes) > 0): ?>

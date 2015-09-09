@@ -19,12 +19,14 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS "[{prefix}]themes" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "parent_id" integer,
   "name" varchar NOT NULL,
-  "file" varchar NOT NULL,
+  "file" varchar,
   "folder" varchar NOT NULL,
   "active" integer NOT NULL,
   "assets" text,
-  UNIQUE ("id")
+  UNIQUE ("id"),
+  CONSTRAINT "fk_theme_parent_id" FOREIGN KEY ("parent_id") REFERENCES "[{prefix}]themes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 ) ;
 
 INSERT INTO "sqlite_sequence" ("name", "seq") VALUES ('[{prefix}]themes', 10000);

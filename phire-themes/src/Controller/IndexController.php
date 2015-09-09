@@ -19,9 +19,10 @@ class IndexController extends AbstractController
         $theme = new Model\Theme();
 
         $this->prepareView('themes/index.phtml');
-        $this->view->title     = 'Themes';
-        $this->view->newThemes = $theme->detectNew();
-        $this->view->themes    = $theme->getAll($this->request->getQuery('sort'));
+        $this->view->title       = 'Themes';
+        $this->view->newThemes   = $theme->detectNew();
+        $this->view->newChildren = $theme->detectChildren();
+        $this->view->themes      = $theme->getAll($this->request->getQuery('sort'));
 
         $this->send();
     }

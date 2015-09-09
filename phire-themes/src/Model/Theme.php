@@ -68,6 +68,35 @@ class Theme extends AbstractModel
     }
 
     /**
+     * Detect new child themes
+     *
+     * @param  boolean $count
+     * @return mixed
+     */
+    public function detectChildren($count = true)
+    {
+        $themePath   = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes';
+        $installed   = [];
+        $newChildren = [];
+
+        if (file_exists($themePath)) {
+            $themes = Table\Themes::findAll();
+
+            foreach ($themes->rows() as $theme) {
+                $installed[] = $theme->folder;
+            }
+
+            foreach ($installed as $folder) {
+                if (file_exists($themePath . '/' . $folder . '-child') && !in_array($folder . '-child', $installed)) {
+                    $newChildren[$folder] = $folder . '-child';
+                }
+            }
+        }
+
+        return ($count) ? count($newChildren) : $newChildren;
+    }
+
+    /**
      * Install themes
      *
      * @param  \Pop\Service\Locator $services
@@ -78,6 +107,7 @@ class Theme extends AbstractModel
     {
         $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes';
         $themes    = $this->detectNew(false);
+        $children  = $this->detectChildren(false);
 
         if (!is_writable($themePath)) {
             throw new \Phire\Exception('Error: The theme folder is not writable.');
@@ -143,6 +173,44 @@ class Theme extends AbstractModel
                 }
             }
         }
+
+        foreach ($children as $parent => $child) {
+            $parentTheme = Table\Themes::findBy(['folder' => $parent]);
+
+            if (isset($parentTheme->id) && file_exists($themePath . '/' . $child)) {
+                $style = null;
+                $info  = [];
+
+                // Check for a style sheet
+                if (file_exists($themePath . '/' . $child . '/style.css')) {
+                    $style = $themePath . '/' . $child . '/style.css';
+                } else if (file_exists($themePath . '/' . $child . '/styles.css')) {
+                    $style = $themePath . '/' . $child . '/styles.css';
+                } else if (file_exists($themePath . '/' . $child . '/css/style.css')) {
+                    $style = $themePath . '/' . $child . '/css/style.css';
+                } else if (file_exists($themePath . '/' . $child . '/css/styles.css')) {
+                    $style = $themePath . '/' . $child . '/css/styles.css';
+                }
+
+                // Get theme info from config file
+                if (null != $style) {
+                    $info = $this->getInfo(file_get_contents($style));
+                }
+
+                // Save theme in the database
+                $thm = new Table\Themes([
+                    'parent_id' => $parentTheme->id,
+                    'name'      => $child,
+                    'folder'    => $child,
+                    'active'    => 0,
+                    'assets'    => serialize([
+                        'info' => $info
+                    ])
+                ]);
+
+                $thm->save();
+            }
+        }
     }
 
     /**
@@ -199,6 +267,24 @@ class Theme extends AbstractModel
                 if (file_exists($themePath . '/' . $theme->file) &&
                     is_writable($themePath . '/' . $theme->file)) {
                     unlink($themePath . '/' . $theme->file);
+                }
+
+                $children = Table\Themes::findBy(['parent_id' => $theme->id]);
+                if ($children->hasRows()) {
+                    foreach ($children as $child) {
+                        $childThemePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $child->folder;
+
+                        // Remove the child theme folder and files
+                        if (file_exists($childThemePath)) {
+                            $dir = new Dir($childThemePath);
+                            $dir->emptyDir(true);
+                        }
+
+                        $c = Table\Themes::findById($child->id);
+                        if (isset($c->id)) {
+                            $c->delete();
+                        }
+                    }
                 }
 
                 $theme->delete();
