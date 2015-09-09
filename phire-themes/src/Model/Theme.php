@@ -99,11 +99,10 @@ class Theme extends AbstractModel
     /**
      * Install themes
      *
-     * @param  \Pop\Service\Locator $services
      * @throws \Exception
      * @return void
      */
-    public function install(\Pop\Service\Locator $services)
+    public function install()
     {
         $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes';
         $themes    = $this->detectNew(false);
@@ -216,11 +215,10 @@ class Theme extends AbstractModel
     /**
      * Process themes
      *
-     * @param  array                $post
-     * @param  \Pop\Service\Locator $services
+     * @param  array $post
      * @return void
      */
-    public function process($post, \Pop\Service\Locator $services)
+    public function process($post)
     {
         foreach ($post as $key => $value) {
             if (strpos($key, 'active') !== false) {
@@ -239,18 +237,17 @@ class Theme extends AbstractModel
         }
 
         if (isset($post['rm_themes']) && (count($post['rm_themes']) > 0)) {
-            $this->uninstall($post['rm_themes'], $services);
+            $this->uninstall($post['rm_themes']);
         }
     }
 
     /**
      * Uninstall themes
      *
-     * @param  array                $ids
-     * @param  \Pop\Service\Locator $services
+     * @param  array $ids
      * @return void
      */
-    public function uninstall($ids, $services)
+    public function uninstall($ids)
     {
         $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes';
 
@@ -271,7 +268,7 @@ class Theme extends AbstractModel
 
                 $children = Table\Themes::findBy(['parent_id' => $theme->id]);
                 if ($children->hasRows()) {
-                    foreach ($children as $child) {
+                    foreach ($children->rows() as $child) {
                         $childThemePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $child->folder;
 
                         // Remove the child theme folder and files
