@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS "[{prefix}]themes" (
   "name" varchar NOT NULL,
   "file" varchar,
   "folder" varchar NOT NULL,
+  "version" varchar NOT NULL,
   "active" integer NOT NULL,
   "assets" text,
   UNIQUE ("id"),

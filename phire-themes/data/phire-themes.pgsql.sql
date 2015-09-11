@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS "[{prefix}]themes" (
   "name" varchar(255) NOT NULL,
   "file" varchar(255),
   "folder" varchar(255) NOT NULL,
+  "version" varchar(255) NOT NULL,
   "active" integer NOT NULL,
   "assets" text,
   PRIMARY KEY ("id"),

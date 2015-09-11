@@ -30,7 +30,7 @@
                 <td><?=$theme->id; ?></td>
                 <td><?=$theme->screenshot; ?></td>
                 <td><?=($assets['info']['Theme Name']) ? $assets['info']['Theme Name'] : '&nbsp;'; ?></td>
-                <td><?=($assets['info']['Version']) ? $assets['info']['Version'] : '&nbsp;'; ?></td>
+                <td><?=$theme->version; ?></td>
                 <td><?=($assets['info']['Description']) ? $assets['info']['Description'] : '&nbsp;'; ?></td>
                 <td><?=($assets['info']['Author']) ? $assets['info']['Author'] : '&nbsp;'; ?></td>
                 <td class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><input type="radio" name="active" value="<?=$theme->id; ?>" <?=$activeChecked; ?>/><?php else: ?>&nbsp;<?php endif; ?></td>

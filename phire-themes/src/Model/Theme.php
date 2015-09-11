@@ -137,8 +137,9 @@ class Theme extends AbstractModel
                     }
 
                     if (file_exists($themePath . '/' . $name)) {
-                        $style = null;
-                        $info  = [];
+                        $style   = null;
+                        $info    = [];
+                        $version = 'N/A';
 
                         // Check for a style sheet
                         if (file_exists($themePath . '/' . $name . '/style.css')) {
@@ -154,15 +155,23 @@ class Theme extends AbstractModel
                         // Get theme info from config file
                         if (null != $style) {
                             $info = $this->getInfo(file_get_contents($style));
+                            if (isset($info['version'])) {
+                                $version = $info['version'];
+                            } else if (isset($info['Version'])) {
+                                $version = $info['Version'];
+                            } else if (isset($info['VERSION'])) {
+                                $version = $info['VERSION'];
+                            }
                         }
 
                         // Save theme in the database
                         $thm = new Table\Themes([
-                            'name'   => $name,
-                            'file'   => $theme,
-                            'folder' => $name,
-                            'active' => 0,
-                            'assets' => serialize([
+                            'name'    => $name,
+                            'file'    => $theme,
+                            'folder'  => $name,
+                            'version' => $version,
+                            'active'  => 0,
+                            'assets'  => serialize([
                                 'info' => $info
                             ])
                         ]);
