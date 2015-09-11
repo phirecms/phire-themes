@@ -150,6 +150,14 @@ class Theme extends AbstractModel
                             $style = $themePath . '/' . $name . '/css/style.css';
                         } else if (file_exists($themePath . '/' . $name . '/css/styles.css')) {
                             $style = $themePath . '/' . $name . '/css/styles.css';
+                        } else if (file_exists($themePath . '/' . $name . '/style/style.css')) {
+                            $style = $themePath . '/' . $name . '/style/style.css';
+                        } else if (file_exists($themePath . '/' . $name . '/style/styles.css')) {
+                            $style = $themePath . '/' . $name . '/style/styles.css';
+                        } else if (file_exists($themePath . '/' . $name . '/styles/style.css')) {
+                            $style = $themePath . '/' . $name . '/styles/style.css';
+                        } else if (file_exists($themePath . '/' . $name . '/styles/styles.css')) {
+                            $style = $themePath . '/' . $name . '/styles/styles.css';
                         }
 
                         // Get theme info from config file
