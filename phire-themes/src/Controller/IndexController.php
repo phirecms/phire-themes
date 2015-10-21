@@ -24,6 +24,12 @@ class IndexController extends AbstractController
         $this->view->newChildren = $theme->detectChildren();
         $this->view->themes      = $theme->getAll($this->request->getQuery('sort'));
 
+        if (!isset($this->sess->updates->themes)) {
+            $this->sess->updates->themes = $theme->getUpdates();
+        }
+
+        $this->view->themeUpdates = $this->sess->updates->themes;
+
         $this->send();
     }
 
@@ -39,6 +45,52 @@ class IndexController extends AbstractController
 
         $this->sess->setRequestValue('saved', true);
         $this->redirect(BASE_PATH . APP_URI . '/themes');
+    }
+
+    /**
+     * Update action method
+     *
+     * @param  int  $id
+     * @return void
+     */
+    public function update($id)
+    {
+        $theme = new Model\Theme();
+        $theme->getById($id);
+
+        if (isset($theme->id) && isset($this->sess->updates->themes[$theme->folder]) &&
+            (version_compare($theme->version, $this->sess->updates->themes[$theme->folder]) == 0)) {
+
+            $this->prepareView('themes/update.phtml');
+
+            if (($this->request->getQuery('update') == 1) &&
+                is_writable(__DIR__ . '/../../../../themes') &&
+                is_writable(__DIR__ . '/../../../../themes/' . $theme->folder) &&
+                is_writable(__DIR__ . '/../../../../themes/' . $theme->folder . '.zip')) {
+                $theme->getUpdate($theme->folder);
+
+                $this->view->title      = 'Update Theme ' . $theme->folder . ' : Complete!';
+                $this->view->complete   = true;
+                $this->view->theme_name = $theme->folder;
+                $this->view->version    = $theme->version;
+            } else {
+                $this->view->title = 'Update ' . $theme->folder;
+                $this->view->theme_id             = $theme->id;
+                $this->view->theme_name           = $theme->folder;
+                $this->view->theme_update_version = $this->sess->updates->themes[$theme->folder];
+
+                if (is_writable(__DIR__ . '/../../../../themes') &&
+                    is_writable(__DIR__ . '/../../../../themes/' . $theme->folder) &&
+                    is_writable(__DIR__ . '/../../../../themes/' . $theme->folder . '.zip')) {
+                    $this->view->writable = true;
+                } else {
+                    $this->view->writable = false;
+                }
+            }
+            $this->send();
+        } else {
+            $this->redirect(BASE_PATH . APP_URI . '/themes');
+        }
     }
 
     /**

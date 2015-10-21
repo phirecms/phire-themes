@@ -17,6 +17,8 @@
                 <th>Version</th>
                 <th>Description</th>
                 <th>Author</th>
+                <th>Installed</th>
+                <th>Updated</th>
                 <th class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><a href="<?=$phireUri . '/themes?sort=active';?>">Active</a><?php else: ?>&nbsp;<?php endif; ?></th>
                 <th class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><input type="checkbox" name="checkall" id="checkall" value="rm_themes" /><?php else: ?>&nbsp;<?php endif; ?></th>
             </tr>
@@ -30,9 +32,13 @@
                 <td><?=$theme->id; ?></td>
                 <td><?=$theme->screenshot; ?></td>
                 <td><?=($assets['info']['Theme Name']) ? $assets['info']['Theme Name'] : '&nbsp;'; ?></td>
-                <td><?=$theme->version; ?></td>
+                <td><?=$theme->version; ?><?php if ($acl->isAllowed($user->role, 'themes', 'update') && isset($themeUpdates) && isset($themeUpdates[$theme->folder]) && (version_compare($theme->version, $themeUpdates[$theme->folder]) == 0)):
+    echo ' (<a class="normal-link" href="' . $phireUri . '/themes/update/' . $theme->id .  '">Update to ' . $themeUpdates[$theme->folder] . '</a>)';
+endif; ?></td>
                 <td><?=($assets['info']['Description']) ? $assets['info']['Description'] : '&nbsp;'; ?></td>
                 <td><?=($assets['info']['Author']) ? $assets['info']['Author'] : '&nbsp;'; ?></td>
+                <td><?=date($config->datetime_format, strtotime($theme->installed_on)); ?></td>
+                <td><?=((null !== $theme->updated_on) ? date($config->datetime_format, strtotime($theme->updated_on)) : '&nbsp;'); ?></td>
                 <td class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><input type="radio" name="active" value="<?=$theme->id; ?>" <?=$activeChecked; ?>/><?php else: ?>&nbsp;<?php endif; ?></td>
                 <td class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><input type="checkbox" name="rm_themes[]" id="rm_themes<?=$i++; ?>" value="<?=$theme->id; ?>" /><?php else: ?>&nbsp;<?php endif; ?></td>
             </tr>

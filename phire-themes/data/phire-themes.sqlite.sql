@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS "[{prefix}]themes" (
   "version" varchar NOT NULL,
   "active" integer NOT NULL,
   "assets" text,
+  "installed_on" datetime,
+  "updated_on" datetime,
   UNIQUE ("id"),
   CONSTRAINT "fk_theme_parent_id" FOREIGN KEY ("parent_id") REFERENCES "[{prefix}]themes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 ) ;

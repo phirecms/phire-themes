@@ -6,6 +6,7 @@ use Phire\Themes\Table;
 use Phire\Model\AbstractModel;
 use Pop\Archive\Archive;
 use Pop\File\Dir;
+use Pop\Http\Client\Curl;
 
 class Theme extends AbstractModel
 {
@@ -33,6 +34,22 @@ class Theme extends AbstractModel
         }
 
         return $rows;
+    }
+
+    /**
+     * Get theme by ID
+     *
+     * @param  int $id
+     * @return void
+     */
+    public function getById($id)
+    {
+        $theme = Table\Themes::findById($id);
+        if (isset($theme->id)) {
+            $data = $theme->getColumns();
+            $data['assets'] = unserialize($data['assets']);
+            $this->data = array_merge($this->data, $data);
+        }
     }
 
     /**
@@ -181,7 +198,8 @@ class Theme extends AbstractModel
                             'active'  => 0,
                             'assets'  => serialize([
                                 'info' => $info
-                            ])
+                            ]),
+                            'installed_on' => date('Y-m-d H:i:s')
                         ]);
 
                         $thm->save();
@@ -227,6 +245,37 @@ class Theme extends AbstractModel
                 $thm->save();
             }
         }
+    }
+
+    /**
+     * Get theme update
+     *
+     * @param  string $theme
+     * @return void
+     */
+    public function getUpdate($theme)
+    {
+        if (file_exists(__DIR__ . '/../../../../themes/' . $theme . '.zip')) {
+            unlink(__DIR__ . '/../../../../themes/' . $theme . '.zip');
+        }
+
+        if (file_exists(__DIR__ . '/../../../../themes/' . $theme)) {
+            $dir = new Dir(__DIR__ . '/../../../../themes/' . $theme);
+            $dir->emptyDir(true);
+        }
+
+        file_put_contents(
+            __DIR__ . '/../../../../themes/' . $theme . '.zip',
+            fopen('http://updates.phirecms.org/releases/themes/' . $theme . '.zip', 'r')
+        );
+
+        $basePath = realpath(__DIR__ . '/../../../../themes/');
+        $archive = new Archive($basePath . '/' . $theme . '.zip');
+        $archive->extract($basePath);
+
+        $theme = Table\Themes::findById($this->id);
+        $theme->updated_on = date('Y-m-d H:i:s');
+        $theme->save();
     }
 
     /**
@@ -304,6 +353,38 @@ class Theme extends AbstractModel
                 $theme->delete();
             }
         }
+    }
+
+    /**
+     * Get update info
+     *
+     * @return \ArrayObject
+     */
+    public function getUpdates()
+    {
+        $themeUpdates = [];
+        $headers      = [
+            'Authorization: ' . base64_encode('phire-updater-' . time()),
+            'User-Agent: ' . (isset($_SERVER['HTTP_USER_AGENT']) ?
+                $_SERVER['HTTP_USER_AGENT'] : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0')
+        ];
+
+        $themes = Table\Themes::findAll();
+        if ($themes->hasRows()) {
+            foreach ($themes->rows() as $theme) {
+                $curl = new Curl('http://updates.phirecms.org/latest/' . $theme->folder . '?theme=1', [
+                    CURLOPT_HTTPHEADER => $headers
+                ]);
+                $curl->send();
+
+                if ($curl->getCode() == 200) {
+                    $json = json_decode($curl->getBody(), true);
+                    $themeUpdates[$theme->folder] = $json['version'];
+                }
+            }
+        }
+
+        return $themeUpdates;
     }
 
     /**

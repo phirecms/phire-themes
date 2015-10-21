@@ -1,0 +1,16 @@
+<?php include $phireHeader; ?>
+        <h1 class="update-header"><?=$title; ?></h1>
+<?php if (isset($complete)): ?>
+        <h3 class="required">Update completed successfully!</h3>
+        <p>You have updated <strong><?=$theme_name; ?></strong> to version <strong class="required"><?=$version; ?></strong>.</p>
+<?php else: ?>
+        <h3>You have chosen to update the <strong><?=$theme_name; ?></strong> theme to version <strong class="required"><?=$theme_update_version; ?></strong></h3>
+        <p class="warning">Please back up all of your files and your database before proceeding.</p>
+<?php if ($writable): ?>
+        <a class="update-btn" href="<?=$phireUri; ?>/themes/update/<?=$theme_id;?>?update=1">Update</a>
+<?php else: ?>
+        <p class="error">The theme folders are not writable. They must be writable to update the theme.</p>
+<?php endif; ?>
+        <p style="padding: 25px 0 0 0; clear: both;">If you have trouble with the update, you can attempt a manual update by downloading the latest version of the theme.</p>
+<?php endif; ?>
+<?php include $phireFooter; ?>
