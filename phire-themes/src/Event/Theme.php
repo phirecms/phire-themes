@@ -23,12 +23,12 @@ class Theme
         if ($application->isRegistered('phire-content')) {
             $theme = Table\Themes::findBy(['active' => 1]);
             if (isset($theme->id)) {
-                $dir       = new Dir($_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder, false, false, false);
+                $dir       = new Dir($_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $theme->folder, ['filesOnly' => true]);
                 $parentDir = null;
                 if (null !== $theme->parent_id) {
                     $parentTheme = Table\Themes::findById($theme->parent_id);
                     if (isset($parentTheme->id)) {
-                        $parentDir = new Dir($_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $parentTheme->folder, false, false, false);
+                        $parentDir = new Dir($_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes/' . $parentTheme->folder, ['filesOnly' => true]);
                     }
                 }
 
