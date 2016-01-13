@@ -18,6 +18,14 @@ return [
                 'permission' => 'install'
             ]
         ],
+        '/themes/upload[/]' => [
+            'controller' => 'Phire\Themes\Controller\IndexController',
+            'action'     => 'upload',
+            'acl'        => [
+                'resource'   => 'themes',
+                'permission' => 'upload'
+            ]
+        ],
         '/themes/update/:id' => [
             'controller' => 'Phire\Themes\Controller\IndexController',
             'action'     => 'update',

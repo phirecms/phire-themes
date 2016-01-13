@@ -6,6 +6,7 @@ use Phire\Themes\Table;
 use Phire\Model\AbstractModel;
 use Pop\Archive\Archive;
 use Pop\File\Dir;
+use Pop\File\Upload;
 use Pop\Http\Client\Curl;
 
 class Theme extends AbstractModel
@@ -111,6 +112,19 @@ class Theme extends AbstractModel
         }
 
         return ($count) ? count($newChildren) : $newChildren;
+    }
+
+    /**
+     * Upload theme
+     *
+     * @param  array $file
+     * @return void
+     */
+    public function upload($file)
+    {
+        $folder = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes';
+        $upload = new Upload($folder);
+        $upload->upload($file);
     }
 
     /**

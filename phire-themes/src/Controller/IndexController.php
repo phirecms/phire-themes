@@ -34,6 +34,23 @@ class IndexController extends AbstractController
     }
 
     /**
+     * Upload action method
+     *
+     * @return void
+     */
+    public function upload()
+    {
+        if (($_FILES) && !empty($_FILES['upload_theme']) && !empty($_FILES['upload_theme']['name'])) {
+            $theme = new Model\Theme();
+            $theme->upload($_FILES['upload_theme']);
+            $theme->install();
+            $this->sess->setRequestValue('saved', true);
+        }
+
+        $this->redirect(BASE_PATH . APP_URI . '/themes');
+    }
+
+    /**
      * Install action method
      *
      * @return void
