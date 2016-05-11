@@ -25,10 +25,10 @@ class Theme extends AbstractModel
         $themePath = $_SERVER['DOCUMENT_ROOT'] . BASE_PATH . CONTENT_PATH . '/themes';
 
         foreach ($rows as $i => $row) {
-            if (file_exists($themePath . '/' . $row->name . '/screenshot.jpg')) {
-                $rows[$i]->screenshot = '<img class="theme-screenshot" src="' . BASE_PATH . CONTENT_PATH . '/themes/' . $row->name . '/screenshot.jpg" width="100" />';
-            } else if (file_exists($themePath . '/' . $row->name . '/screenshot.png')) {
-                $rows[$i]->screenshot = '<img class="theme-screenshot" src="' . BASE_PATH . CONTENT_PATH . '/themes/' . $row->name . '/screenshot.png" width="100" />';
+            if (file_exists($themePath . '/' . $row->folder . '/screenshot.jpg')) {
+                $rows[$i]->screenshot = '<img class="theme-screenshot" src="' . BASE_PATH . CONTENT_PATH . '/themes/' . $row->folder . '/screenshot.jpg" width="100" />';
+            } else if (file_exists($themePath . '/' . $row->folder . '/screenshot.png')) {
+                $rows[$i]->screenshot = '<img class="theme-screenshot" src="' . BASE_PATH . CONTENT_PATH . '/themes/' . $row->folder . '/screenshot.png" width="100" />';
             } else {
                 $rows[$i]->screenshot = null;
             }
@@ -147,48 +147,50 @@ class Theme extends AbstractModel
 
         foreach ($themes as $theme) {
             if (file_exists($themePath . '/' . $theme)) {
-                $ext  = null;
-                $name = null;
+                $ext    = null;
+                $folder = null;
                 if (substr($theme, -4) == '.zip') {
-                    $ext  = 'zip';
-                    $name = substr($theme, 0, -4);
+                    $ext    = 'zip';
+                    $folder = substr($theme, 0, -4);
                 } else if (substr($theme, -4) == '.tgz') {
-                    $ext  = 'tgz';
-                    $name = substr($theme, 0, -4);
+                    $ext    = 'tgz';
+                    $folder = substr($theme, 0, -4);
                 } else if (substr($theme, -7) == '.tar.gz') {
-                    $ext  = 'tar.gz';
-                    $name = substr($theme, 0, -7);
+                    $ext    = 'tar.gz';
+                    $folder = substr($theme, 0, -7);
                 }
 
-                if ((null !== $ext) && (null !== $name) && array_key_exists($ext, $formats)) {
+                if ((null !== $ext) && (null !== $folder) && array_key_exists($ext, $formats)) {
                     $archive = new Archive($themePath . '/' . $theme);
                     $archive->extract($themePath);
-                    if ((stripos($theme, 'gz') !== false) && (file_exists($themePath . '/' . $name . '.tar'))) {
-                        unlink($themePath . '/' . $name . '.tar');
+                    if ((stripos($theme, 'gz') !== false) && (file_exists($themePath . '/' . $folder . '.tar'))) {
+                        unlink($themePath . '/' . $folder . '.tar');
                     }
 
-                    if (file_exists($themePath . '/' . $name)) {
+
+                    if (file_exists($themePath . '/' . $folder)) {
                         $style   = null;
+                        $name    = '';
                         $info    = [];
                         $version = 'N/A';
 
                         // Check for a style sheet
-                        if (file_exists($themePath . '/' . $name . '/style.css')) {
-                            $style = $themePath . '/' . $name . '/style.css';
-                        } else if (file_exists($themePath . '/' . $name . '/styles.css')) {
-                            $style = $themePath . '/' . $name . '/styles.css';
-                        } else if (file_exists($themePath . '/' . $name . '/css/style.css')) {
-                            $style = $themePath . '/' . $name . '/css/style.css';
-                        } else if (file_exists($themePath . '/' . $name . '/css/styles.css')) {
-                            $style = $themePath . '/' . $name . '/css/styles.css';
-                        } else if (file_exists($themePath . '/' . $name . '/style/style.css')) {
-                            $style = $themePath . '/' . $name . '/style/style.css';
-                        } else if (file_exists($themePath . '/' . $name . '/style/styles.css')) {
-                            $style = $themePath . '/' . $name . '/style/styles.css';
-                        } else if (file_exists($themePath . '/' . $name . '/styles/style.css')) {
-                            $style = $themePath . '/' . $name . '/styles/style.css';
-                        } else if (file_exists($themePath . '/' . $name . '/styles/styles.css')) {
-                            $style = $themePath . '/' . $name . '/styles/styles.css';
+                        if (file_exists($themePath . '/' . $folder . '/style.css')) {
+                            $style = $themePath . '/' . $folder . '/style.css';
+                        } else if (file_exists($themePath . '/' . $folder . '/styles.css')) {
+                            $style = $themePath . '/' . $folder . '/styles.css';
+                        } else if (file_exists($themePath . '/' . $folder . '/css/style.css')) {
+                            $style = $themePath . '/' . $folder . '/css/style.css';
+                        } else if (file_exists($themePath . '/' . $folder . '/css/styles.css')) {
+                            $style = $themePath . '/' . $folder . '/css/styles.css';
+                        } else if (file_exists($themePath . '/' . $folder . '/style/style.css')) {
+                            $style = $themePath . '/' . $folder . '/style/style.css';
+                        } else if (file_exists($themePath . '/' . $folder . '/style/styles.css')) {
+                            $style = $themePath . '/' . $folder . '/style/styles.css';
+                        } else if (file_exists($themePath . '/' . $folder . '/styles/style.css')) {
+                            $style = $themePath . '/' . $folder . '/styles/style.css';
+                        } else if (file_exists($themePath . '/' . $folder . '/styles/styles.css')) {
+                            $style = $themePath . '/' . $folder . '/styles/styles.css';
                         }
 
                         // Get theme info from config file
@@ -201,13 +203,27 @@ class Theme extends AbstractModel
                             } else if (isset($info['VERSION'])) {
                                 $version = $info['VERSION'];
                             }
+
+                            if (isset($info['name'])) {
+                                $name = $info['name'];
+                            } else if (isset($info['Name'])) {
+                                $name = $info['Name'];
+                            } else if (isset($info['NAME'])) {
+                                $name = $info['NAME'];
+                            } else if (isset($info['theme name'])) {
+                                $name = $info['theme name'];
+                            } else if (isset($info['Theme Name'])) {
+                                $name = $info['Theme Name'];
+                            } else if (isset($info['THEME NAME'])) {
+                                $name = $info['THEME NAME'];
+                            }
                         }
 
                         // Save theme in the database
                         $thm = new Table\Themes([
                             'name'    => $name,
                             'file'    => $theme,
-                            'folder'  => $name,
+                            'folder'  => $folder,
                             'version' => $version,
                             'active'  => 0,
                             'assets'  => serialize([
@@ -389,14 +405,14 @@ class Theme extends AbstractModel
         $themes = Table\Themes::findAll();
         if ($themes->hasRows()) {
             foreach ($themes->rows() as $theme) {
-                $curl = new Curl('http://updates.phirecms.org/latest/' . $theme->folder . '?theme=1', [
+                $curl = new Curl('http://updates.phirecms.org/latest/' . $theme->name . '?theme=1', [
                     CURLOPT_HTTPHEADER => $headers
                 ]);
                 $curl->send();
 
                 if ($curl->getCode() == 200) {
                     $json = json_decode($curl->getBody(), true);
-                    $themeUpdates[$theme->folder] = $json['version'];
+                    $themeUpdates[$theme->name] = $json['version'];
                 }
             }
         }

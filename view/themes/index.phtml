@@ -19,7 +19,7 @@
             <tr>
                 <th><a href="<?=$phireUri . '/themes?sort=id';?>">#</a></th>
                 <th>Screenshot</th>
-                <th><a href="<?=$phireUri . '/themes?sort=folder';?>">Name</a></th>
+                <th><a href="<?=$phireUri . '/themes?sort=name';?>">Name</a></th>
                 <th>Version</th>
                 <th>Description</th>
                 <th>Author</th>
@@ -38,8 +38,8 @@
                 <td><?=$theme->id; ?></td>
                 <td><?=$theme->screenshot; ?></td>
                 <td><?=($assets['info']['Theme Name']) ? $assets['info']['Theme Name'] : '&nbsp;'; ?></td>
-                <td><?=$theme->version; ?><?php if ($acl->isAllowed($user->role, 'themes', 'update') && isset($themeUpdates) && isset($themeUpdates[$theme->folder]) && (version_compare($theme->version, $themeUpdates[$theme->folder]) == 0)):
-    echo ' (<a class="normal-link" href="' . $phireUri . '/themes/update/' . $theme->id .  '">Update to ' . $themeUpdates[$theme->folder] . '</a>)';
+                <td><?=$theme->version; ?><?php if ($acl->isAllowed($user->role, 'themes', 'update') && isset($themeUpdates) && isset($themeUpdates[$theme->name]) && (version_compare($theme->version, $themeUpdates[$theme->name]) < 0)):
+    echo ' (<a class="normal-link" href="' . $phireUri . '/themes/update/' . $theme->id .  '">Update to ' . $themeUpdates[$theme->name] . '</a>)';
 endif; ?></td>
                 <td><?=($assets['info']['Description']) ? $assets['info']['Description'] : '&nbsp;'; ?></td>
                 <td><?=($assets['info']['Author']) ? $assets['info']['Author'] : '&nbsp;'; ?></td>
