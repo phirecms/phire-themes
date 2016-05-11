@@ -255,7 +255,8 @@ class Theme extends AbstractModel
                     'active'    => 0,
                     'assets'    => serialize([
                         'info' => $info
-                    ])
+                    ]),
+                    'installed_on' => date('Y-m-d H:i:s')
                 ]);
 
                 $thm->save();
