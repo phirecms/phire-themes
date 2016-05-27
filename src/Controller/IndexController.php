@@ -1,11 +1,32 @@
 <?php
+/**
+ * Phire Themes Module
+ *
+ * @link       https://github.com/phirecms/phire-themes
+ * @author     Nick Sagona, III <dev@nolainteractive.com>
+ * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @license    http://www.phirecms.org/license     New BSD License
+ */
 
+/**
+ * @namespace
+ */
 namespace Phire\Themes\Controller;
 
 use Phire\Themes\Model;
 use Phire\Themes\Table;
 use Phire\Controller\AbstractController;
 
+/**
+ * Themes Index Controller class
+ *
+ * @category   Phire\Themes
+ * @package    Phire\Themes
+ * @author     Nick Sagona, III <dev@nolainteractive.com>
+ * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @license    http://www.phirecms.org/license     New BSD License
+ * @version    1.0.0
+ */
 class IndexController extends AbstractController
 {
 
