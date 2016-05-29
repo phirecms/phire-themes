@@ -29,3 +29,10 @@
     padding: 0 8px 0 0;
     color: #b4b5b4;
 }
+
+.theme-screenshot {
+    margin: 0;
+    padding: 3px;
+    background-color: #fff;
+    border: solid 1px #ccc;
+}
