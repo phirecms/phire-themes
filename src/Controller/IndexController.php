@@ -97,7 +97,7 @@ class IndexController extends AbstractController
         $theme->getById($id);
 
         if (isset($theme->id) && isset($this->sess->updates->themes[$theme->name]) &&
-            (version_compare($theme->version, $this->sess->updates->themes[$theme->name]) == 0)) {
+            (version_compare($theme->version, $this->sess->updates->themes[$theme->name]) < 0)) {
 
             $this->prepareView('themes/update.phtml');
 
@@ -112,9 +112,12 @@ class IndexController extends AbstractController
                     $name = substr($name, 0, (strrpos($name, '-')));
                 }
 
-                $theme->getUpdate($name);
+                $new = $name . '-' . $this->sess->updates->themes[$theme->name];
+                $old = $name . '-' . $theme->version;
 
-                $this->view->title      = 'Update Theme ' . $theme->name . ' : Complete!';
+                $theme->getUpdate($new, $old, $this->sess->updates->themes[$theme->name]);
+
+                $this->view->title      = 'Update Theme ' . $name . ' : Complete!';
                 $this->view->complete   = true;
                 $this->view->theme_name = $theme->name;
                 $this->view->version    = $theme->version;

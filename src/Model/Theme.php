@@ -304,32 +304,51 @@ class Theme extends AbstractModel
     /**
      * Get theme update
      *
-     * @param  string $theme
+     * @param  string $new
+     * @param  string $old
+     * @param  string $version
      * @return void
      */
-    public function getUpdate($theme)
+    public function getUpdate($new, $old, $version)
     {
-        if (file_exists(__DIR__ . '/../../../../themes/' . $theme . '.zip')) {
-            unlink(__DIR__ . '/../../../../themes/' . $theme . '.zip');
+        if (file_exists(__DIR__ . '/../../../../themes/' . $old . '.zip')) {
+            unlink(__DIR__ . '/../../../../themes/' . $old . '.zip');
         }
 
-        if (file_exists(__DIR__ . '/../../../../themes/' . $theme)) {
-            $dir = new Dir(__DIR__ . '/../../../../themes/' . $theme);
+        if (file_exists(__DIR__ . '/../../../../themes/' . $old)) {
+            $dir = new Dir(__DIR__ . '/../../../../themes/' . $old);
             $dir->emptyDir(true);
         }
 
         file_put_contents(
-            __DIR__ . '/../../../../themes/' . $theme . '.zip',
-            fopen('http://updates.phirecms.org/releases/themes/' . $theme . '.zip', 'r')
+            __DIR__ . '/../../../../themes/' . $new . '.zip',
+            fopen('http://updates.phirecms.org/releases/themes/' . $new . '.zip', 'r')
         );
 
         $basePath = realpath(__DIR__ . '/../../../../themes/');
-        $archive = new Archive($basePath . '/' . $theme . '.zip');
+        $archive = new Archive($basePath . '/' . $new . '.zip');
         $archive->extract($basePath);
 
         $theme = Table\Themes::findById($this->id);
+
+        $assets = unserialize($theme->assets);
+
+        if (isset($assets['info']['version'])) {
+            $assets['info']['version'] = $version;
+        } else if (isset($assets['info']['Version'])) {
+            $assets['info']['Version'] = $version;
+        } else if (isset($assets['info']['VERSION'])) {
+            $assets['info']['VERSION'] = $version;
+        }
+
+        $theme->file       = $new . '.zip';
+        $theme->folder     = $new;
+        $theme->version    = $version;
+        $theme->assets     = serialize($assets);
         $theme->updated_on = date('Y-m-d H:i:s');
         $theme->save();
+
+        $this->getById($this->id);
     }
 
     /**
