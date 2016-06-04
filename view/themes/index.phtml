@@ -38,7 +38,7 @@
                 <td><?=$theme->id; ?></td>
                 <td><?=$theme->screenshot; ?></td>
                 <td><?=(isset($assets['info']['Theme Name']) ? $assets['info']['Theme Name'] : '&nbsp;'); ?></td>
-                <td><?=$theme->version; ?><?php if ($acl->isAllowed($user->role, 'themes', 'update') && isset($themeUpdates) && isset($themeUpdates[$theme->name]) && (version_compare($theme->version, $themeUpdates[$theme->name]) < 0)):
+                <td><?=$theme->version; ?><?php if ($acl->isAllowed($user->role, 'themes', 'update') && isset($themeUpdates) && isset($themeUpdates[$theme->name]) && ($theme->version != 'N/A') && (version_compare($theme->version, $themeUpdates[$theme->name]) < 0)):
     echo ' (<a class="normal-link" href="' . $phireUri . '/themes/update/' . $theme->id .  '">Update to ' . $themeUpdates[$theme->name] . '</a>)';
 endif; ?></td>
                 <td><?=(isset($assets['info']['Description']) ? $assets['info']['Description'] : '&nbsp;'); ?></td>

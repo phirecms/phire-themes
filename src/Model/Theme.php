@@ -426,7 +426,13 @@ class Theme extends AbstractModel
         $themes = Table\Themes::findAll();
         if ($themes->hasRows()) {
             foreach ($themes->rows() as $theme) {
-                $curl = new Curl('http://updates.phirecms.org/latest/' . $theme->name . '?theme=1', [
+                $name    = $theme->folder;
+                $version = substr($name, (strrpos($name, '-') + 1));
+                if (is_numeric($version)) {
+                    $name = substr($name, 0, (strrpos($name, '-')));
+                }
+
+                $curl = new Curl('http://updates.phirecms.org/latest/' . $name . '?theme=1', [
                     CURLOPT_HTTPHEADER => $headers
                 ]);
                 $curl->send();

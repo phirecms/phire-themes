@@ -96,8 +96,8 @@ class IndexController extends AbstractController
         $theme = new Model\Theme();
         $theme->getById($id);
 
-        if (isset($theme->id) && isset($this->sess->updates->themes[$theme->folder]) &&
-            (version_compare($theme->version, $this->sess->updates->themes[$theme->folder]) == 0)) {
+        if (isset($theme->id) && isset($this->sess->updates->themes[$theme->name]) &&
+            (version_compare($theme->version, $this->sess->updates->themes[$theme->name]) == 0)) {
 
             $this->prepareView('themes/update.phtml');
 
@@ -105,17 +105,24 @@ class IndexController extends AbstractController
                 is_writable(__DIR__ . '/../../../../themes') &&
                 is_writable(__DIR__ . '/../../../../themes/' . $theme->folder) &&
                 is_writable(__DIR__ . '/../../../../themes/' . $theme->folder . '.zip')) {
-                $theme->getUpdate($theme->folder);
 
-                $this->view->title      = 'Update Theme ' . $theme->folder . ' : Complete!';
+                $name    = $theme->folder;
+                $version = substr($name, (strrpos($name, '-') + 1));
+                if (is_numeric($version)) {
+                    $name = substr($name, 0, (strrpos($name, '-')));
+                }
+
+                $theme->getUpdate($name);
+
+                $this->view->title      = 'Update Theme ' . $theme->name . ' : Complete!';
                 $this->view->complete   = true;
-                $this->view->theme_name = $theme->folder;
+                $this->view->theme_name = $theme->name;
                 $this->view->version    = $theme->version;
             } else {
-                $this->view->title = 'Update ' . $theme->folder;
+                $this->view->title = 'Update ' . $theme->name;
                 $this->view->theme_id             = $theme->id;
-                $this->view->theme_name           = $theme->folder;
-                $this->view->theme_update_version = $this->sess->updates->themes[$theme->folder];
+                $this->view->theme_name           = $theme->name;
+                $this->view->theme_update_version = $this->sess->updates->themes[$theme->name];
 
                 if (is_writable(__DIR__ . '/../../../../themes') &&
                     is_writable(__DIR__ . '/../../../../themes/' . $theme->folder) &&
