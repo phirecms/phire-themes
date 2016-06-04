@@ -37,12 +37,12 @@
             <tr>
                 <td><?=$theme->id; ?></td>
                 <td><?=$theme->screenshot; ?></td>
-                <td><?=($assets['info']['Theme Name']) ? $assets['info']['Theme Name'] : '&nbsp;'; ?></td>
+                <td><?=(isset($assets['info']['Theme Name']) ? $assets['info']['Theme Name'] : '&nbsp;'); ?></td>
                 <td><?=$theme->version; ?><?php if ($acl->isAllowed($user->role, 'themes', 'update') && isset($themeUpdates) && isset($themeUpdates[$theme->name]) && (version_compare($theme->version, $themeUpdates[$theme->name]) < 0)):
     echo ' (<a class="normal-link" href="' . $phireUri . '/themes/update/' . $theme->id .  '">Update to ' . $themeUpdates[$theme->name] . '</a>)';
 endif; ?></td>
-                <td><?=($assets['info']['Description']) ? $assets['info']['Description'] : '&nbsp;'; ?></td>
-                <td><?=($assets['info']['Author']) ? $assets['info']['Author'] : '&nbsp;'; ?></td>
+                <td><?=(isset($assets['info']['Description']) ? $assets['info']['Description'] : '&nbsp;'); ?></td>
+                <td><?=(isset($assets['info']['Author']) ? $assets['info']['Author'] : '&nbsp;'); ?></td>
                 <td><?=date($config->datetime_format, strtotime($theme->installed_on)); ?></td>
                 <td><?=((null !== $theme->updated_on) ? date($config->datetime_format, strtotime($theme->updated_on)) : '&nbsp;'); ?></td>
                 <td class="text-center"><?php if ($acl->isAllowed($user->role, 'themes', 'process')): ?><input type="radio" name="active" value="<?=$theme->id; ?>" <?=$activeChecked; ?>/><?php else: ?>&nbsp;<?php endif; ?></td>
