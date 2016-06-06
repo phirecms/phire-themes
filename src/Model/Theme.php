@@ -431,35 +431,39 @@ class Theme extends AbstractModel
     /**
      * Get update info
      *
+     * @param  boolean $live
      * @return \ArrayObject
      */
-    public function getUpdates()
+    public function getUpdates($live = true)
     {
         $themeUpdates = [];
-        $headers      = [
-            'Authorization: ' . base64_encode('phire-updater-' . time()),
-            'User-Agent: ' . (isset($_SERVER['HTTP_USER_AGENT']) ?
-                $_SERVER['HTTP_USER_AGENT'] : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0')
-        ];
 
-        $themes = Table\Themes::findAll();
-        if ($themes->hasRows()) {
-            foreach ($themes->rows() as $theme) {
-                $name    = $theme->folder;
-                $version = substr($name, (strrpos($name, '-') + 1));
-                if (is_numeric($version)) {
-                    $name = substr($name, 0, (strrpos($name, '-')));
-                }
+        if ($live) {
+            $headers      = [
+                'Authorization: ' . base64_encode('phire-updater-' . time()),
+                'User-Agent: ' . (isset($_SERVER['HTTP_USER_AGENT']) ?
+                    $_SERVER['HTTP_USER_AGENT'] : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0')
+            ];
 
-                $curl = new Curl('http://updates.phirecms.org/latest/' . $name . '?theme=1', [
-                    CURLOPT_HTTPHEADER => $headers
-                ]);
-                $curl->send();
+                $themes = Table\Themes::findAll();
+                if ($themes->hasRows()) {
+                    foreach ($themes->rows() as $theme) {
+                        $name    = $theme->folder;
+                        $version = substr($name, (strrpos($name, '-') + 1));
+                        if (is_numeric($version)) {
+                            $name = substr($name, 0, (strrpos($name, '-')));
+                        }
 
-                if ($curl->getCode() == 200) {
-                    $json = json_decode($curl->getBody(), true);
-                    $themeUpdates[$theme->name] = $json['version'];
-                }
+                        $curl = new Curl('http://updates.phirecms.org/latest/' . $name . '?theme=1', [
+                            CURLOPT_HTTPHEADER => $headers
+                        ]);
+                        $curl->send();
+
+                        if ($curl->getCode() == 200) {
+                            $json = json_decode($curl->getBody(), true);
+                            $themeUpdates[$theme->name] = $json['version'];
+                        }
+                    }
             }
         }
 

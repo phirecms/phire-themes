@@ -53,6 +53,7 @@ return [
                 'priority' => 1000
             ]
         ],
+        'updates'   => true,
         'invisible' => [
             'search.php',
             'search.phtml',

@@ -46,7 +46,7 @@ class IndexController extends AbstractController
         $this->view->themes      = $theme->getAll($this->request->getQuery('sort'));
 
         if (!isset($this->sess->updates->themes)) {
-            $this->sess->updates->themes = $theme->getUpdates();
+            $this->sess->updates->themes = $theme->getUpdates($this->application->module('phire-themes')->config()['updates']);
         }
 
         $this->view->themeUpdates = $this->sess->updates->themes;
